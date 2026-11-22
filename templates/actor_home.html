@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Casting calls</h1>
+<p class="sub">Open projects looking for a voice. Send your best take.</p>
+
+{% for p in projects %}
+  <article class="panel call">
+    <div class="call-head">
+      <div>
+        <span class="cat">{{ p.category }}</span>
+        <h2>{{ p.title }}</h2>
+        <p class="meta">{{ p.company_name or p.client_name }} · {{ p.language_required }} ·
+          {{ p.gender_preference }} voice · deadline {{ p.deadline.strftime('%d %b %Y') }} · {{ p.audition_count }} audition(s)</p>
+      </div>
+      <div class="fee">PKR {{ "{:,}".format(p.budget_pkr) }}</div>
+    </div>
+    <blockquote class="script">{{ p.script }}</blockquote>
+    {% if p.my_status %}
+      <p class="sent">You sent an audition · <b>{{ p.my_status }}</b></p>
+    {% else %}
+      <form method="post" action="{{ url_for('send_audition', project_id=p.project_id) }}" enctype="multipart/form-data" class="record">
+        <label>Your recording <input type="file" name="audio" accept="audio/*" required></label>
+        <label>Note to client <input name="note" placeholder="e.g. Can deliver in 2 days"></label>
+        <button class="btn-actor">Send audition</button>
+      </form>
+    {% endif %}
+  </article>
+{% else %}
+  <p class="sub">No open casting calls right now.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>My auditions and jobs</h1>
+<div class="meters">
+  <div class="meter"><span>Auditions sent</span><b>{{ auditions|length }}</b></div>
+  <div class="meter"><span>Jobs won</span><b>{{ contracts|length }}</b></div>
+  <div class="meter"><span>Earned (paid)</span><b>PKR {{ "{:,}".format(earned) }}</b></div>
+</div>
+
+<h2 class="h">Jobs</h2>
+{% for c in contracts %}
+  <div class="panel row-panel">
+    <div><b>{{ c.title }}</b><p class="meta">{{ c.company_name }} · contract #{{ c.contract_id }}</p>
+      {% if c.review_rating %}<p class="meta">Client review: {{ "★" * c.review_rating }} "{{ c.review_comment }}"</p>{% endif %}</div>
+    <div class="right"><div class="fee">PKR {{ "{:,}".format(c.amount_pkr) }}</div>
+      <span class="pill {{ c.payment_status|lower }}">{{ c.payment_status }}</span></div>
+  </div>
+{% else %}
+  <p class="sub">No jobs yet. Keep auditioning!</p>
+{% endfor %}
+
+<h2 class="h">Auditions</h2>
+{% for a in auditions %}
+  <div class="panel">
+    <div class="row-panel">
+      <div><b>{{ a.title }}</b><p class="meta">{{ a.company_name }} · {{ a.category }} · sent {{ a.submitted_at.strftime('%d %b, %H:%M') }}</p></div>
+      <span class="pill {{ a.status|lower|replace(' ', '-') }}">{{ a.status }}</span>
+    </div>
+    <audio controls preload="none" src="{{ url_for('audio', filename=a.audio_file) }}"></audio>
+  </div>
+{% else %}
+  <p class="sub">You haven't sent any auditions yet.</p>
+{% endfor %}
+{% endblock %}

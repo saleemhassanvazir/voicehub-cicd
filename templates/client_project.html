@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block office %}
+<a class="link" href="{{ url_for('client_home') }}">&larr; All casting calls</a>
+<div class="card">
+  <div class="head-row">
+    <div><h1>{{ project.title }}</h1>
+      <p class="muted">{{ project.category }} · {{ project.language_required }} · {{ project.gender_preference }} voice ·
+        deadline {{ project.deadline.strftime('%d %b %Y') }} · budget PKR {{ "{:,}".format(project.budget_pkr) }}</p></div>
+    <span class="badge {{ project.status|lower }}">{{ project.status }}</span>
+  </div>
+  <p class="script-box">{{ project.script }}</p>
+</div>
+
+{% if contract %}
+<div class="card contract">
+  <h2>Contract #{{ contract.contract_id }} with {{ contract.actor_name }}</h2>
+  <p>Amount: <b>PKR {{ "{:,}".format(contract.amount_pkr) }}</b> ·
+     Payment: <span class="badge {{ contract.payment_status|lower }}">{{ contract.payment_status }}</span>
+     {% if contract.paid_at %}<span class="muted">on {{ contract.paid_at.strftime('%d %b %Y') }}</span>{% endif %}</p>
+  {% if contract.payment_status == 'Pending' %}
+    <form method="post" action="{{ url_for('pay', contract_id=contract.contract_id) }}"><button class="btn-client">Mark as paid</button></form>
+  {% elif contract.review_rating %}
+    <p>Your review: <span class="stars">{{ "★" * contract.review_rating }}{{ "☆" * (5 - contract.review_rating) }}</span> "{{ contract.review_comment }}"</p>
+  {% else %}
+    <form method="post" action="{{ url_for('review', contract_id=contract.contract_id) }}" class="form inline">
+      <label>Rating <select name="rating">{% for n in [5,4,3,2,1] %}<option value="{{ n }}">{{ n }} star{{ 's' if n > 1 }}</option>{% endfor %}</select></label>
+      <label class="grow">Comment <input name="comment" placeholder="How was working with {{ contract.actor_name }}?"></label>
+      <button class="btn-client">Submit review</button>
+    </form>
+  {% endif %}
+</div>
+{% endif %}
+
+<h2>Auditions ({{ auditions|length }})</h2>
+<div class="cards">
+{% for a in auditions %}
+  <div class="card actor-card {{ 'chosen' if a.status == 'Hired' }}">
+    <div class="head-row"><b>{{ a.full_name }}</b><span class="badge {{ a.status|lower|replace(' ', '-') }}">{{ a.status }}</span></div>
+    <p class="muted">{{ a.gender }} · {{ a.voice_age_range }} · {{ a.voice_style or '—' }}</p>
+    <p class="muted">{{ a.languages }} · {{ a.experience_years }} yrs · {{ a.city or '' }} · rating {{ a.rating }} · usual rate PKR {{ "{:,}".format(a.rate_pkr) }}</p>
+    <audio controls preload="none" src="{{ url_for('audio', filename=a.audio_file) }}"></audio>
+    {% if a.note %}<p class="note">"{{ a.note }}"</p>{% endif %}
+    {% if project.status == 'Open' %}
+      <form method="post" action="{{ url_for('hire', audition_id=a.audition_id) }}"><button class="btn-client">Hire {{ a.full_name.split()[0] }}</button></form>
+    {% endif %}
+  </div>
+{% else %}
+  <p class="muted">No auditions yet. Voice actors will see this casting call in their Studio.</p>
+{% endfor %}
+</div>
+{% endblock %}

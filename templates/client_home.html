@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block office %}
+<div class="office-grid">
+  <section>
+    <h1>My casting calls</h1>
+    <table class="table">
+      <tr><th>Project</th><th>Category</th><th>Budget</th><th>Deadline</th><th>Auditions</th><th>Status</th><th></th></tr>
+      {% for p in projects %}
+        <tr>
+          <td><b>{{ p.title }}</b></td><td>{{ p.category }}</td>
+          <td>PKR {{ "{:,}".format(p.budget_pkr) }}</td><td>{{ p.deadline.strftime('%d %b %Y') }}</td>
+          <td class="num">{{ p.audition_count }}</td>
+          <td><span class="badge {{ p.status|lower }}">{{ p.status }}</span></td>
+          <td><a class="link" href="{{ url_for('client_project', project_id=p.project_id) }}">Open</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7" class="muted">No casting calls yet. Post your first one.</td></tr>
+      {% endfor %}
+    </table>
+  </section>
+
+  <form class="card form" method="post" action="{{ url_for('post_project') }}">
+    <h2>Post a casting call</h2>
+    <label>Title <input name="title" required placeholder="e.g. Radio ad for a juice brand"></label>
+    <label>Category <select name="category">{% for c in categories %}<option>{{ c }}</option>{% endfor %}</select></label>
+    <label>Script <textarea name="script" required placeholder="The lines the actor should read"></textarea></label>
+    <div class="grid2">
+      <label>Language <input name="language_required" value="Urdu" required></label>
+      <label>Voice <select name="gender_preference"><option>Any</option><option>Male</option><option>Female</option></select></label>
+      <label>Budget (PKR) <input name="budget_pkr" type="number" min="500" step="500" value="10000" required></label>
+      <label>Deadline <input name="deadline" type="date" required></label>
+    </div>
+    <button class="btn-client">Publish casting call</button>
+  </form>
+</div>
+{% endblock %}

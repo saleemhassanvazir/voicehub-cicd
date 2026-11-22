@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block public %}
+<h1 class="title">Voice<span>Hub</span></h1>
+<p class="lead">Where clients find voices, and voice actors find work.</p>
+<div class="release"><b>v{{ version }}</b> · What's new: {{ whats_new }}</div>
+
+<div class="split">
+  <!-- Voice actor half (dark) -->
+  <section class="half dark">
+    <h2>I'm a voice actor</h2>
+    <form method="post" class="form">
+      <input type="hidden" name="role" value="actor">
+      <label>Email <input name="email" type="email" required></label>
+      <label>Password <input name="password" type="password" required></label>
+      <button class="btn-actor">Log in to Studio</button>
+    </form>
+    <p class="small">New here? <a href="{{ url_for('signup', role='actor') }}">Create a voice actor account</a></p>
+    <div class="demo">
+      <p class="small">Demo accounts (one click):</p>
+      {% for a in actors %}
+        <form method="post" action="{{ url_for('demo_login', role='actor', uid=a.actor_id) }}">
+          <button class="chip-btn">{{ a.full_name }}</button>
+        </form>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Client half (light) -->
+  <section class="half light">
+    <h2>I'm hiring a voice</h2>
+    <form method="post" class="form">
+      <input type="hidden" name="role" value="client">
+      <label>Email <input name="email" type="email" required></label>
+      <label>Password <input name="password" type="password" required></label>
+      <button class="btn-client">Log in to Business</button>
+    </form>
+    <p class="small">New here? <a href="{{ url_for('signup', role='client') }}">Create a client account</a></p>
+    <div class="demo">
+      <p class="small">Demo accounts (one click):</p>
+      {% for c in clients %}
+        <form method="post" action="{{ url_for('demo_login', role='client', uid=c.client_id) }}">
+          <button class="chip-btn">{{ c.full_name }} · {{ c.company_name }}</button>
+        </form>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+<p class="small center">Demo password for every sample account: <code>demo123</code></p>
+{% endblock %}

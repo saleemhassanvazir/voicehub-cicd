@@ -22,7 +22,7 @@ def wav_file(name="take.wav"):
 
 def test_health_check_reports_version_and_database(client):
     response = client.get("/health")
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response.json["status"] == "ok"
     assert response.json["version"] == config.VERSION
 

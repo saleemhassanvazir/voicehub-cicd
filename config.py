@@ -22,7 +22,7 @@ UPLOAD_DIR = Path(os.environ.get("UPLOAD_DIR", BASE / "uploads"))
 # ---- Release information (shown on the website) ----------------------------
 # For the demo: change VERSION and WHATS_NEW, commit and push.
 VERSION = (BASE / "VERSION").read_text().strip()
-WHATS_NEW = "Clients can now hire, pay and review voice actors in one place."
+WHATS_NEW = "new design."
 
 # build_info.json is written by the GitHub Actions build job (build number, commit).
 _build_file = BASE / "build_info.json"
